@@ -36,7 +36,7 @@ def configure_transaction(transaction):
 
     path = transaction['origin']['resourceName']
     method = transaction['request']['method']
-    status_code = int(transaction['expected']['statusCode'])
+    status_code = transaction['expected']['statusCode']
     response = api_description['paths'][path[len(base_path):]][method.lower()]['responses'][status_code]
 
     # Whether we should skip this test

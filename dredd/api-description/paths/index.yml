@@ -1,0 +1,801 @@
+/series:
+  post:
+    summary: Add series
+    description: |
+      Given an indexer and its id, adds the series to Medusa.
+    parameters:
+      - name: series
+        in: body
+        required: true
+        description: Only id (with indexer information) should be specified
+        schema:
+          $ref: '#/definitions/Series'
+          example:
+            id:
+              tvdb: 301824
+    responses:
+      201:
+        description: Series added
+        headers:
+          Location:
+            type: string
+            description: The location of the newly added series
+        schema:
+          $ref: '#/definitions/Series'
+      400:
+        $ref: '#/responses/error'
+        description: Invalid request
+        x-request:
+          body: {}
+      404:
+        $ref: '#/responses/error'
+        description: Series not found in the indexer
+        x-request:
+          body:
+            id:
+              tvdb: 99999999
+      409:
+        $ref: '#/responses/error'
+        description: Series already added
+  get:
+    summary: Return series that the user has access to
+    description: |
+      The Series endpoint returns information about the Series added to Medusa.
+    parameters:
+      - name: paused
+        in: query
+        required: false
+        description: Filter series based on paused status
+        type: boolean
+      - $ref: '#/parameters/detailed'
+      - $ref: '#/parameters/page'
+      - $ref: '#/parameters/limit'
+      - $ref: '#/parameters/sort'
+    responses:
+      200:
+        $ref: '#/responses/pagination'
+        description: A paged array of series
+        schema:
+          type: array
+          items:
+            $ref: '#/definitions/Series'
+      400:
+        $ref: '#/responses/error'
+        description: Invalid pagination parameters
+        x-request:
+          query-params:
+            sort: abc
+/series/{id}:
+  get:
+    summary: Return information about a specific series
+    description: Retrieves information about a specific series
+    parameters:
+      - $ref: '#/parameters/series-id'
+        name: id
+    responses:
+      200:
+        description: The series information
+        schema:
+          $ref: '#/definitions/Series'
+      400:
+        $ref: '#/responses/error'
+        description: Invalid id
+        x-request:
+          path-params:
+            id: 123456
+      404:
+        $ref: '#/responses/error'
+        description: Series not found
+        x-request:
+          path-params:
+            id: tvdb999999999
+  patch:
+    summary: Partial update series
+    description: Partial update series
+    parameters:
+      - $ref: '#/parameters/series-id'
+        name: id
+      - name: series
+        in: body
+        required: false
+        description: Currently, only pause field is supported
+        schema:
+          $ref: '#/definitions/Series'
+    responses:
+      200:
+        description: Response with only the updated fields
+        schema:
+          $ref: '#/definitions/Series'
+      400:
+        $ref: '#/responses/error'
+        description: Invalid id
+        x-request:
+          body:
+            id:
+              tvdb: 80379
+          path-params:
+            id: tvdb301824
+      404:
+        $ref: '#/responses/error'
+        description: Series not found
+        x-request:
+          body:
+            id:
+              tvdb: 999999999
+          path-params:
+            id: tvdb999999999
+  delete:
+    summary: Delete a series
+    description: Delete a series
+    parameters:
+      - $ref: '#/parameters/series-id'
+        name: id
+      - name: remove-files
+        in: query
+        required: false
+        description: Whether files from the series should be removed
+        type: boolean
+    responses:
+      204:
+        description: Series is deleted successfully
+      400:
+        $ref: '#/responses/error'
+        description: Invalid id
+        x-request:
+          path-params:
+            id: 123456
+      404:
+        $ref: '#/responses/error'
+        description: Series not found
+        x-request:
+          path-params:
+            id: tvdb999999999
+      409:
+        $ref: '#/responses/error'
+        description: Unable to delete series
+/series/{id}/{field}:
+  get:
+    summary: Return a specific field from a given series
+    description: Retrieves a specific field from a given series
+    parameters:
+      - $ref: '#/parameters/series-id'
+        name: id
+      - name: field
+        in: path
+        required: true
+        description: Any series field
+        x-example: network
+        type: string
+    responses:
+      200:
+        description: The series information
+        schema: {}
+      400:
+        $ref: '#/responses/error'
+        description: Invalid field
+        x-request:
+          path-params:
+            field: abc
+      404:
+        $ref: '#/responses/error'
+        description: Series not found
+        x-request:
+          path-params:
+            id: tvdb999999999
+/series/{seriesid}/episode:
+  get:
+    summary: Return episodes from a given series
+    description: |
+      The Episode endpoint returns information about the Episodes from a given Series.
+    parameters:
+      - $ref: '#/parameters/series-id'
+        name: seriesid
+      - name: season
+        in: query
+        required: false
+        description: The episode season
+        type: integer
+        format: int32
+      - $ref: '#/parameters/detailed'
+      - $ref: '#/parameters/page'
+      - $ref: '#/parameters/limit'
+      - $ref: '#/parameters/sort'
+    responses:
+      200:
+        $ref: '#/responses/pagination'
+        description: A paged array of episodes
+        schema:
+          type: array
+          items:
+            $ref: '#/definitions/Episode'
+      400:
+        $ref: '#/responses/error'
+        description: Invalid series id or pagination parameters
+        x-request:
+          query-params:
+            sort: abc
+      404:
+        $ref: '#/responses/error'
+        description: Series not found
+        x-request:
+          path-params:
+            seriesid: tvdb999999999
+/series/{seriesid}/episode/{id}:
+  get:
+    summary: Return a specific episode from a given series
+    description: Retrieve a specific episode from a given series
+    parameters:
+      - $ref: '#/parameters/series-id'
+        name: seriesid
+      - $ref: '#/parameters/episode-id'
+        name: id
+      - $ref: '#/parameters/detailed'
+    responses:
+      200:
+        description: The episode information
+        schema:
+          $ref: '#/definitions/Episode'
+      400:
+        $ref: '#/responses/error'
+        description: Invalid series or episode id
+        x-request:
+          path-params:
+            id: abc
+      404:
+        $ref: '#/responses/error'
+        description: Series or episode not found
+        x-request:
+          path-params:
+            id: e999
+/series/{seriesid}/episode/{id}/{field}:
+  get:
+    summary: Return a specific field from a given episode
+    description: Retrieve a specific field from a given episode
+    parameters:
+      - $ref: '#/parameters/series-id'
+        name: seriesid
+      - $ref: '#/parameters/episode-id'
+        name: id
+      - name: field
+        in: path
+        required: true
+        description: The episode field
+        x-example: airDate
+        type: string
+    responses:
+      200:
+        description: The episode field value
+        schema: {}
+      400:
+        $ref: '#/responses/error'
+        description: Invalid series or episode id or invalid field
+        x-request:
+          path-params:
+            field: abc
+      404:
+        $ref: '#/responses/error'
+        description: Series or episode not found
+        x-request:
+          path-params:
+            id: "2050-12-31"
+/series/{seriesid}/episode/{id}/metadata:
+  get:
+    summary: Return the video metadata from a specific episode
+    description: Retrieve the video metadata from a specific episode
+    parameters:
+      - $ref: '#/parameters/series-id'
+        name: seriesid
+      - $ref: '#/parameters/episode-id'
+        name: id
+    responses:
+      200:
+        description: The video metadata
+        schema:
+          $ref: '#/definitions/Metadata'
+      400:
+        $ref: '#/responses/error'
+        description: Invalid series or episode id
+        x-request:
+          path-params:
+            id: s01
+      404:
+        $ref: '#/responses/error'
+        description: Series or episode not found
+        x-request:
+          path-params:
+            id: s99e99
+/series/{seriesid}/asset/{id}:
+  get:
+    summary: Return a specific asset from a given series
+    description: Retrieves a specific asset from a given series
+    produces:
+      - "image/jpeg"
+    parameters:
+      - $ref: '#/parameters/series-id'
+        name: seriesid
+      - $ref: '#/parameters/asset-id'
+        name: id
+    responses:
+      200:
+        description: The asset stream
+        x-expect:
+          no-body: true
+      400:
+        $ref: '#/responses/error'
+        description: Invalid series id
+        x-request:
+          path-params:
+            seriesid: abc
+      404:
+        $ref: '#/responses/error'
+        description: Series or asset not found
+        x-request:
+          path-params:
+            id: abc
+/series/{id}/operation:
+  post:
+    summary: Create an operation that relates to a specific series
+    description: >
+      Create an operation that relates to a specific series.
+      Currently only type='ARCHIVE_EPISODES' is supported
+    parameters:
+      - $ref: '#/parameters/series-id'
+        name: id
+      - name: operation
+        in: body
+        required: true
+        schema:
+          $ref: '#/definitions/Operation'
+          example:
+            type: ARCHIVE_EPISODES
+    responses:
+      201:
+        description: "When type='ARCHIVE_EPISODES': episodes were archived"
+        x-disabled: true
+      204:
+        description: "When type='ARCHIVE_EPISODES': no episode was archived"
+      400:
+        $ref: '#/responses/error'
+        description: Invalid id or invalid operation type
+        x-request:
+          body:
+            type: SUPER_OPERATION
+      404:
+        $ref: '#/responses/error'
+        description: Series not found
+        x-request:
+          path-params:
+            id: tvmaze999999999
+/alias:
+  get:
+    summary: Return existing aliases
+    description: Retrieve existing aliases
+    parameters:
+      - name: series
+        in: query
+        required: false
+        description: "Series identifier. E.g.: tvdb1234"
+        type: string
+      - name: season
+        in: query
+        required: false
+        description: The season number
+        type: integer
+        format: int32
+      - name: type
+        in: query
+        required: false
+        description: Alias type
+        type: string
+        enum: [local]
+      - $ref: '#/parameters/page'
+      - $ref: '#/parameters/limit'
+      - $ref: '#/parameters/sort'
+    responses:
+      200:
+        $ref: '#/responses/pagination'
+        description: A paged array of aliases
+        schema:
+          type: array
+          items:
+            $ref: '#/definitions/Alias'
+      400:
+        $ref: '#/responses/error'
+        description: Invalid series or pagination parameters
+        x-request:
+          query-params:
+            limit: 0
+  post:
+    summary: Create a new alias
+    description: Create a new alias
+    parameters:
+      - name: alias
+        in: body
+        required: true
+        schema:
+          $ref: '#/definitions/Alias'
+    responses:
+      201:
+        description: Alias created
+        headers:
+          Location:
+            type: string
+            description: The location of the newly created alias
+        schema:
+          $ref: '#/definitions/Alias'
+        x-stash:
+          alias-id: "${body['id']}"
+      400:
+        $ref: '#/responses/error'
+        description: Invalid request
+        x-request:
+          body:
+            type: local
+      409:
+        $ref: '#/responses/error'
+        description: Unable to create alias
+        x-disabled: true
+/alias/{id}/{field}:
+  get:
+    summary: Return a specific field from a given alias
+    description: Retrieve a specific field from a a given alias
+    parameters:
+      - $ref: '#/parameters/alias-id'
+        name: id
+      - name: field
+        in: path
+        required: true
+        description: Any alias field
+        x-example: name
+        type: string
+    responses:
+      200:
+        description: The alias information
+        schema: {}
+        x-request:
+          path-params:
+            id: "${stash['alias-id']}"
+      400:
+        $ref: '#/responses/error'
+        description: Invalid field
+        x-request:
+          path-params:
+            id: "${stash['alias-id']}"
+            field: abc
+      404:
+        $ref: '#/responses/error'
+        description: Alias not found
+        x-request:
+          path-params:
+            id: 999999999
+/alias/{id}:
+  get:
+    summary: Return information about a given alias
+    description: Retrieves information about a given alias
+    parameters:
+      - $ref: '#/parameters/alias-id'
+        name: id
+    responses:
+      200:
+        description: The alias information
+        schema:
+          $ref: '#/definitions/Alias'
+        x-request:
+          path-params:
+            id: "${stash['alias-id']}"
+      404:
+        $ref: '#/responses/error'
+        description: Alias not found
+        x-request:
+          path-params:
+            id: 999999999
+  put:
+    summary: Replace alias data
+    description: Replace alias data
+    parameters:
+      - $ref: '#/parameters/alias-id'
+        name: id
+        x-example: 1
+      - name: alias
+        in: body
+        required: true
+        schema:
+          $ref: '#/definitions/Alias'
+          example:
+            $ref: '#/definitions/Alias/example'
+            id: 1
+    responses:
+      204:
+        description: Alias data replaced
+        x-request:
+          path-params:
+            id: "${stash['alias-id']}"
+          body:
+            id: "${stash['alias-id']}"
+            series: tvdb301824
+            name: TheBig
+            type: local
+      400:
+        $ref: '#/responses/error'
+        description: Invalid request
+        x-request:
+          body:
+            id: 1
+      404:
+        $ref: '#/responses/error'
+        description: Alias not found
+        x-request:
+          body:
+            id: 999999999
+            series: tvdb301824
+            name: TheBig
+            type: local
+          path-params:
+            id: 999999999
+  delete:
+    summary: Delete an alias
+    description: Delete an alias
+    parameters:
+      - $ref: '#/parameters/alias-id'
+        name: id
+        x-example: 123456
+    responses:
+      204:
+        description: Alias deleted
+        x-request:
+          path-params:
+            id: "${stash['alias-id']}"
+      404:
+        $ref: '#/responses/error'
+        description: Alias not found
+        x-request:
+          path-params:
+            id: 999999999
+/alias-source:
+  get:
+    summary: Return existing sources for aliases
+    description: Retrieve existing sources for aliases
+    parameters:
+      - $ref: '#/parameters/page'
+      - $ref: '#/parameters/limit'
+      - $ref: '#/parameters/sort'
+    responses:
+      200:
+        $ref: '#/responses/pagination'
+        description: A paged array of alias-source
+        schema:
+          type: array
+          items:
+            $ref: '#/definitions/AliasSource'
+      400:
+        $ref: '#/responses/error'
+        description: Invalid pagination parameters
+        x-request:
+          query-params:
+            page: abc
+/alias-source/{id}:
+  get:
+    summary: Return a specific source for aliases
+    description: Retrieves a specific source for aliases
+    parameters:
+      - $ref: '#/parameters/alias-source-id'
+        name: id
+    responses:
+      200:
+        description: The alias source information
+        schema:
+          $ref: '#/definitions/AliasSource'
+      404:
+        $ref: '#/responses/error'
+        description: Alias source not found
+        x-request:
+          path-params:
+            id: abc
+/alias-source/{id}/{field}:
+  get:
+    summary: Return a specific field from a given source for aliases
+    description: Retrieve a specific field from a given source for aliases
+    parameters:
+      - $ref: '#/parameters/alias-source-id'
+        name: id
+      - name: field
+        in: path
+        required: true
+        x-example: lastRefresh
+        type: string
+    responses:
+      200:
+        description: The alias source field value
+        schema: {}
+      400:
+        $ref: '#/responses/error'
+        description: Invalid field
+        x-request:
+          path-params:
+            field: abc
+      404:
+        $ref: '#/responses/error'
+        description: Alias source not found
+        x-request:
+          path-params:
+            id: abc
+/alias-source/{id}/operation:
+  post:
+    summary: Create an operation that relates to a given alias source
+    description: >
+      Create an operation that relates to a given alias source.
+      Currently only type='REFRESH' is supported
+    parameters:
+      - $ref: '#/parameters/alias-source-with-all-id'
+        name: id
+      - name: operation
+        in: body
+        required: true
+        schema:
+          $ref: '#/definitions/Operation'
+          example:
+            type: REFRESH
+    responses:
+      201:
+        description: "When type='REFRESH': aliases for that source were refreshed"
+        schema:
+          $ref: '#/definitions/Operation'
+      400:
+        $ref: '#/responses/error'
+        description: Invalid id or invalid operation type
+        x-request:
+          body:
+            type: SUPER_OPERATION
+      404:
+        $ref: '#/responses/error'
+        description: Alias source not found
+        x-request:
+          path-params:
+            id: abc
+/config:
+  get:
+    summary: Return configurations for Medusa
+    description: Retrieve configurations
+    parameters:
+      - $ref: '#/parameters/page'
+      - $ref: '#/parameters/limit'
+      - $ref: '#/parameters/sort'
+    responses:
+      200:
+        $ref: '#/responses/pagination'
+        description: A paged array of config objects
+        schema:
+          type: array
+          items:
+            $ref: '#/definitions/Config'
+      400:
+        $ref: '#/responses/error'
+        description: Invalid pagination parameters
+        x-request:
+          query-params:
+            page: 0
+/config/{id}:
+  get:
+    summary: Return information about a given configuration
+    description: Retrieve information about a given configuration
+    parameters:
+      - $ref: '#/parameters/config-id'
+        name: id
+    responses:
+      200:
+        description: The configuration information
+        schema:
+          $ref: '#/definitions/Config'
+      404:
+        $ref: '#/responses/error'
+        description: Configuration not found
+        x-request:
+          path-params:
+            id: super
+/config/{id}/{field}:
+  get:
+    summary: Return a specific field from a given configuration
+    description: Retrieve a specific field from a given configuration
+    parameters:
+      - $ref: '#/parameters/config-id'
+        name: id
+      - name: field
+        in: path
+        required: true
+        description: Any configuration field
+        x-example: themeName
+        type: string
+    responses:
+      200:
+        description: The configuration information
+        schema: {}
+      400:
+        $ref: '#/responses/error'
+        description: Invalid field
+        x-request:
+          path-params:
+            field: abc
+      404:
+        $ref: '#/responses/error'
+        description: Configuration not found
+        x-request:
+          path-params:
+            id: abc
+/log:
+  get:
+    summary: Return log messages from the application.
+    description: Retrieve log messages. Default sorting is descending by timestamp
+    parameters:
+      - $ref: '#/parameters/log-level'
+      - $ref: '#/parameters/page'
+      - $ref: '#/parameters/limit'
+      - $ref: '#/parameters/sort'
+    responses:
+      200:
+        $ref: '#/responses/pagination_stream'
+        description: A paged array of log messages
+        schema:
+          type: array
+          items:
+            $ref: '#/definitions/Log'
+        examples:
+          'application/json; charset=UTF-8':
+            - $ref: '#/definitions/Log/example'
+            - $ref: '#/definitions/Log/example'
+            - $ref: '#/definitions/Log/example'
+      400:
+        $ref: '#/responses/error'
+        description: Invalid log level or pagination parameter
+        x-request:
+          query-params:
+            log-level: abc
+  post:
+    summary: Log a message
+    description: Log a message
+    parameters:
+      - name: log
+        in: body
+        required: true
+        schema:
+          $ref: '#/definitions/Log'
+    responses:
+      201:
+        description: Log message successfully created
+        x-expect:
+          no-body: true
+      400:
+        $ref: '#/responses/error'
+        description: Invalid request
+        x-request:
+          body:
+            level: error
+/authenticate:
+  post:
+    security: []
+    summary: Return a JWT for the provided user. This is required for all other routes
+    description: DESCRIPTION
+    parameters:
+      - name: auth
+        in: body
+        description: auth object
+        required: true
+        schema:
+          $ref: '#/definitions/Auth'
+    responses:
+      200:
+        description: The JWT for the user
+        schema:
+          type: object
+          properties:
+            token:
+              type: string
+        x-no-api-key: true
+        x-request:
+          body:
+            username: "${stash['web-username']}"
+            password: "${stash['web-password']}"
+      401:
+        $ref: '#/responses/error'
+        description: No credentials provided or invalid credentials
+        x-request:
+          body: {}

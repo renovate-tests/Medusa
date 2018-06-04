@@ -1,0 +1,36 @@
+swagger: '2.0'
+info:
+  title: Medusa API
+  description: DESCRIPTION
+  version: 1.0.0
+host: 'localhost:8081'
+schemes:
+  - http
+  - https
+securityDefinitions:
+  x-api-key:
+    type: apiKey
+    name: x-api-key
+    in: query
+  Bearer:
+    type: apiKey
+    name: Authorization
+    in: header
+basePath: /api/v2
+consumes:
+  - 'application/json'
+produces:
+  - 'application/json; charset=UTF-8'
+  - 'text/plain; charset=UTF-8'
+  - 'image/jpeg'
+security:
+  - x-api-key: []
+  - Bearer: []
+paths:
+  $ref: 'paths/index.yml'
+definitions:
+  $ref: 'definitions/index.yml'
+parameters:
+  $ref: 'parameters/index.yml'
+responses:
+  $ref: 'responses/index.yml'

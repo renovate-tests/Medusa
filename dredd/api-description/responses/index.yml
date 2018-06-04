@@ -1,0 +1,36 @@
+pagination:
+  description: Pagination response
+  headers:
+    X-Pagination-Page:
+      type: integer
+      format: int32
+      description: The page number
+    X-Pagination-Limit:
+      type: integer
+      format: int32
+      description: The pagination limit
+    X-Pagination-Count:
+      type: integer
+      format: int32
+      description: The total items count
+    Link:
+      type: string
+      description: "The pagination links: next, last, first and previous"
+pagination_stream:
+  description: Pagination response
+  headers:
+    X-Pagination-Page:
+      type: integer
+      format: int32
+      description: The page number
+    X-Pagination-Limit:
+      type: integer
+      format: int32
+      description: The pagination limit
+    Link:
+      type: string
+      description: "The pagination links: next, last, first and previous"
+error:
+  description: Unexpected error
+  schema:
+    $ref: '#/definitions/Error'

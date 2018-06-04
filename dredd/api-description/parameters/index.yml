@@ -1,0 +1,91 @@
+detailed:
+  name: detailed
+  in: query
+  required: false
+  description: Whether response should contain detailed information
+  type: boolean
+page:
+  name: page
+  in: query
+  required: false
+  description: The page to be returned. Default value is 1
+  type: integer
+  format: int32
+limit:
+  name: limit
+  in: query
+  required: false
+  description: Maximum number of items per page. Default value is 20. Max value is 1000
+  type: integer
+  format: int32
+sort:
+  name: sort
+  in: query
+  required: false
+  description: The field (or list of fields) to be used while sorting. Use + or - prefix to define sorting order.
+  type: string
+series-id:
+  name: series-id
+  in: path
+  required: true
+  description: The series id to retrieve. E.g. tvdb1234
+  x-example: tvdb301824
+  type: string
+episode-id:
+  name: episode-id
+  in: path
+  required: true
+  description: The episode id to retrieve. E.g. s02e03, e34 or 2016-12-31
+  x-example: s01e01
+  type: string
+alias-id:
+  name: alias-id
+  in: path
+  required: true
+  description: The alias id to retrieve
+  x-example: 123456
+  type: integer
+  format: int32
+alias-source-id:
+  name: alias-source-id
+  in: path
+  required: true
+  description: The alias-source id to retrieve
+  type: string
+  enum: [local, xem, anidb]
+alias-source-with-all-id:
+  name: alias-source-id
+  in: path
+  required: true
+  description: The alias-source id to retrieve
+  type: string
+  enum: [all, local, xem, anidb]
+asset-id:
+  name: asset-id
+  in: path
+  required: true
+  description: The asset to retrieve
+  type: string
+  enum:
+    - banner
+    - bannerThumb
+    - fanart
+    - poster
+    - posterThumb
+    - network
+    - small
+config-id:
+  name: config-id
+  in: path
+  required: true
+  description: The configuration to retrieve
+  type: string
+  enum:
+    - main
+log-level:
+  name: level
+  in: query
+  required: false
+  description: The log level
+  type: string
+  enum: [ERROR, WARNING, INFO, DEBUG, DB]
