@@ -72,44 +72,6 @@ def config(monkeypatch, app_config):
     config_data['news']['latest'] = app.NEWS_LATEST
     config_data['news']['unread'] = app.NEWS_UNREAD
 
-    config_data['kodi'] = NonEmptyDict()
-    config_data['kodi']['enabled'] = bool(app.USE_KODI)
-    config_data['kodi']['alwaysOn'] = bool(app.KODI_ALWAYS_ON)
-    config_data['kodi']['notify'] = NonEmptyDict()
-    config_data['kodi']['notify']['snatch'] = bool(app.KODI_NOTIFY_ONSNATCH)
-    config_data['kodi']['notify']['download'] = bool(app.KODI_NOTIFY_ONDOWNLOAD)
-    config_data['kodi']['notify']['subtitleDownload'] = bool(app.KODI_NOTIFY_ONSUBTITLEDOWNLOAD)
-    config_data['kodi']['update'] = NonEmptyDict()
-    config_data['kodi']['update']['library'] = bool(app.KODI_UPDATE_LIBRARY)
-    config_data['kodi']['update']['full'] = bool(app.KODI_UPDATE_FULL)
-    config_data['kodi']['update']['onlyFirst'] = bool(app.KODI_UPDATE_ONLYFIRST)
-    config_data['kodi']['host'] = app.KODI_HOST
-    config_data['kodi']['username'] = app.KODI_USERNAME
-    # config_data['kodi']['password'] = app.KODI_PASSWORD
-    config_data['kodi']['libraryCleanPending'] = bool(app.KODI_LIBRARY_CLEAN_PENDING)
-    config_data['kodi']['cleanLibrary'] = bool(app.KODI_CLEAN_LIBRARY)
-
-    config_data['plex'] = NonEmptyDict()
-    config_data['plex']['server'] = NonEmptyDict()
-    config_data['plex']['server']['enabled'] = bool(app.USE_PLEX_SERVER)
-    config_data['plex']['server']['notify'] = NonEmptyDict()
-    config_data['plex']['server']['notify']['snatch'] = bool(app.PLEX_NOTIFY_ONSNATCH)
-    config_data['plex']['server']['notify']['download'] = bool(app.PLEX_NOTIFY_ONDOWNLOAD)
-    config_data['plex']['server']['notify']['subtitleDownload'] = bool(app.PLEX_NOTIFY_ONSUBTITLEDOWNLOAD)
-    config_data['plex']['server']['updateLibrary'] = bool(app.PLEX_UPDATE_LIBRARY)
-    config_data['plex']['server']['host'] = app.PLEX_SERVER_HOST
-    # config_data['plex']['server']['token'] = app.PLEX_SERVER_TOKEN
-    config_data['plex']['server']['username'] = app.PLEX_SERVER_USERNAME
-    # config_data['plex']['server']['password'] = app.PLEX_SERVER_PASSWORD
-    config_data['plex']['client'] = NonEmptyDict()
-    config_data['plex']['client']['enabled'] = bool(app.USE_PLEX_CLIENT)
-    config_data['plex']['client']['username'] = app.PLEX_CLIENT_USERNAME
-    # config_data['plex']['client']['password'] = app.PLEX_CLIENT_PASSWORD
-    config_data['plex']['client']['host'] = app.PLEX_CLIENT_HOST
-
-    config_data['emby'] = NonEmptyDict()
-    config_data['emby']['enabled'] = bool(app.USE_EMBY)
-
     config_data['torrents'] = NonEmptyDict()
     config_data['torrents']['authType'] = app.TORRENT_AUTH_TYPE
     config_data['torrents']['dir'] = app.TORRENT_DIR

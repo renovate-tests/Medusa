@@ -53,7 +53,6 @@ class ConfigHandler(BaseRequestHandler):
     patches = {
         'main': {
             'anonRedirect': StringField(app, 'ANON_REDIRECT'),
-            'emby.enabled': BooleanField(app, 'USE_EMBY'),
             'torrents.authType': StringField(app, 'TORRENT_AUTH_TYPE'),
             'torrents.dir': StringField(app, 'TORRENT_DIR'),
             'torrents.enabled': BooleanField(app, 'USE_TORRENTS'),
@@ -104,6 +103,9 @@ class ConfigHandler(BaseRequestHandler):
             'backlogOverview.period': StringField(app, 'BACKLOG_PERIOD'),
             'backlogOverview.status': StringField(app, 'BACKLOG_STATUS'),
             'rootDirs': ListField(app, 'ROOT_DIRS'),
+        },
+        'notifications': {
+            'emby.enabled': BooleanField(app, 'USE_EMBY'),
         }
     }
 
@@ -257,40 +259,6 @@ class DataGenerator(object):
         section_data['news']['latest'] = app.NEWS_LATEST
         section_data['news']['unread'] = app.NEWS_UNREAD
 
-        section_data['kodi'] = NonEmptyDict()
-        section_data['kodi']['enabled'] = bool(app.USE_KODI)
-        section_data['kodi']['alwaysOn'] = bool(app.KODI_ALWAYS_ON)
-        section_data['kodi']['notify'] = NonEmptyDict()
-        section_data['kodi']['notify']['snatch'] = bool(app.KODI_NOTIFY_ONSNATCH)
-        section_data['kodi']['notify']['download'] = bool(app.KODI_NOTIFY_ONDOWNLOAD)
-        section_data['kodi']['notify']['subtitleDownload'] = bool(app.KODI_NOTIFY_ONSUBTITLEDOWNLOAD)
-        section_data['kodi']['update'] = NonEmptyDict()
-        section_data['kodi']['update']['library'] = bool(app.KODI_UPDATE_LIBRARY)
-        section_data['kodi']['update']['full'] = bool(app.KODI_UPDATE_FULL)
-        section_data['kodi']['update']['onlyFirst'] = bool(app.KODI_UPDATE_ONLYFIRST)
-        section_data['kodi']['host'] = app.KODI_HOST
-        section_data['kodi']['username'] = app.KODI_USERNAME
-        section_data['kodi']['libraryCleanPending'] = bool(app.KODI_LIBRARY_CLEAN_PENDING)
-        section_data['kodi']['cleanLibrary'] = bool(app.KODI_CLEAN_LIBRARY)
-
-        section_data['plex'] = NonEmptyDict()
-        section_data['plex']['server'] = NonEmptyDict()
-        section_data['plex']['server']['enabled'] = bool(app.USE_PLEX_SERVER)
-        section_data['plex']['server']['notify'] = NonEmptyDict()
-        section_data['plex']['server']['notify']['snatch'] = bool(app.PLEX_NOTIFY_ONSNATCH)
-        section_data['plex']['server']['notify']['download'] = bool(app.PLEX_NOTIFY_ONDOWNLOAD)
-        section_data['plex']['server']['notify']['subtitleDownload'] = bool(app.PLEX_NOTIFY_ONSUBTITLEDOWNLOAD)
-        section_data['plex']['server']['updateLibrary'] = bool(app.PLEX_UPDATE_LIBRARY)
-        section_data['plex']['server']['host'] = app.PLEX_SERVER_HOST
-        section_data['plex']['server']['username'] = app.PLEX_SERVER_USERNAME
-        section_data['plex']['client'] = NonEmptyDict()
-        section_data['plex']['client']['enabled'] = bool(app.USE_PLEX_CLIENT)
-        section_data['plex']['client']['username'] = app.PLEX_CLIENT_USERNAME
-        section_data['plex']['client']['host'] = app.PLEX_CLIENT_HOST
-
-        section_data['emby'] = NonEmptyDict()
-        section_data['emby']['enabled'] = bool(app.USE_EMBY)
-
         section_data['torrents'] = NonEmptyDict()
         section_data['torrents']['authType'] = app.TORRENT_AUTH_TYPE
         section_data['torrents']['dir'] = app.TORRENT_DIR
@@ -349,6 +317,47 @@ class DataGenerator(object):
         section_data['indexers'] = NonEmptyDict()
         section_data['indexers']['config'] = get_indexer_config()
         section_data['processMethod'] = app.PROCESS_METHOD
+
+        return section_data
+
+    @staticmethod
+    def data_notifications():
+        """Notifications."""
+        section_data = NonEmptyDict()
+
+        section_data['kodi'] = NonEmptyDict()
+        section_data['kodi']['enabled'] = bool(app.USE_KODI)
+        section_data['kodi']['alwaysOn'] = bool(app.KODI_ALWAYS_ON)
+        section_data['kodi']['notify'] = NonEmptyDict()
+        section_data['kodi']['notify']['snatch'] = bool(app.KODI_NOTIFY_ONSNATCH)
+        section_data['kodi']['notify']['download'] = bool(app.KODI_NOTIFY_ONDOWNLOAD)
+        section_data['kodi']['notify']['subtitleDownload'] = bool(app.KODI_NOTIFY_ONSUBTITLEDOWNLOAD)
+        section_data['kodi']['update'] = NonEmptyDict()
+        section_data['kodi']['update']['library'] = bool(app.KODI_UPDATE_LIBRARY)
+        section_data['kodi']['update']['full'] = bool(app.KODI_UPDATE_FULL)
+        section_data['kodi']['update']['onlyFirst'] = bool(app.KODI_UPDATE_ONLYFIRST)
+        section_data['kodi']['host'] = app.KODI_HOST
+        section_data['kodi']['username'] = app.KODI_USERNAME
+        section_data['kodi']['libraryCleanPending'] = bool(app.KODI_LIBRARY_CLEAN_PENDING)
+        section_data['kodi']['cleanLibrary'] = bool(app.KODI_CLEAN_LIBRARY)
+
+        section_data['plex'] = NonEmptyDict()
+        section_data['plex']['server'] = NonEmptyDict()
+        section_data['plex']['server']['enabled'] = bool(app.USE_PLEX_SERVER)
+        section_data['plex']['server']['notify'] = NonEmptyDict()
+        section_data['plex']['server']['notify']['snatch'] = bool(app.PLEX_NOTIFY_ONSNATCH)
+        section_data['plex']['server']['notify']['download'] = bool(app.PLEX_NOTIFY_ONDOWNLOAD)
+        section_data['plex']['server']['notify']['subtitleDownload'] = bool(app.PLEX_NOTIFY_ONSUBTITLEDOWNLOAD)
+        section_data['plex']['server']['updateLibrary'] = bool(app.PLEX_UPDATE_LIBRARY)
+        section_data['plex']['server']['host'] = app.PLEX_SERVER_HOST
+        section_data['plex']['server']['username'] = app.PLEX_SERVER_USERNAME
+        section_data['plex']['client'] = NonEmptyDict()
+        section_data['plex']['client']['enabled'] = bool(app.USE_PLEX_CLIENT)
+        section_data['plex']['client']['username'] = app.PLEX_CLIENT_USERNAME
+        section_data['plex']['client']['host'] = app.PLEX_CLIENT_HOST
+
+        section_data['emby'] = NonEmptyDict()
+        section_data['emby']['enabled'] = bool(app.USE_EMBY)
 
         return section_data
 

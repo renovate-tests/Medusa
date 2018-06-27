@@ -1242,11 +1242,6 @@ definitions:
             type: string
           fanartBackgroundOpacity:
             type: number
-          emby:
-            type: object
-            properties:
-              enabled:
-                type: boolean
           logDir:
             type: string
           posterSortby:
@@ -1260,11 +1255,6 @@ definitions:
             type: boolean
           timePreset:
             type: string
-          kodi:
-            type: object
-            properties:
-              enabled:
-                type: boolean
           dbPath:
             type: string
           pythonVersion:
