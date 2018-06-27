@@ -25,7 +25,7 @@ from medusa.server.api.v2.base import (
     set_nested_value,
 )
 
-from six import text_type
+from six import iteritems, text_type
 
 from tornado.escape import json_decode
 
@@ -51,58 +51,60 @@ class ConfigHandler(BaseRequestHandler):
     allowed_methods = ('GET', 'PATCH', )
     #: patch mapping
     patches = {
-        'anonRedirect': StringField(app, 'ANON_REDIRECT'),
-        'emby.enabled': BooleanField(app, 'USE_EMBY'),
-        'torrents.authType': StringField(app, 'TORRENT_AUTH_TYPE'),
-        'torrents.dir': StringField(app, 'TORRENT_DIR'),
-        'torrents.enabled': BooleanField(app, 'USE_TORRENTS'),
-        'torrents.highBandwidth': StringField(app, 'TORRENT_HIGH_BANDWIDTH'),
-        'torrents.host': StringField(app, 'TORRENT_HOST'),
-        'torrents.label': StringField(app, 'TORRENT_LABEL'),
-        'torrents.labelAnime': StringField(app, 'TORRENT_LABEL_ANIME'),
-        'torrents.method': StringField(app, 'TORRENT_METHOD'),
-        'torrents.password': StringField(app, 'TORRENT_PASSWORD'),
-        'torrents.path': BooleanField(app, 'TORRENT_PATH'),
-        'torrents.paused': BooleanField(app, 'TORRENT_PAUSED'),
-        'torrents.rpcurl': StringField(app, 'TORRENT_RPCURL'),
-        'torrents.seedLocation': StringField(app, 'TORRENT_SEED_LOCATION'),
-        'torrents.seedTime': StringField(app, 'TORRENT_SEED_TIME'),
-        'torrents.username': StringField(app, 'TORRENT_USERNAME'),
-        'torrents.verifySSL': BooleanField(app, 'TORRENT_VERIFY_CERT'),
-        'nzb.enabled': BooleanField(app, 'USE_NZBS'),
-        'nzb.dir': StringField(app, 'NZB_DIR'),
-        'nzb.method': StringField(app, 'NZB_METHOD'),
-        'nzb.nzbget.category': StringField(app, 'NZBGET_CATEGORY'),
-        'nzb.nzbget.categoryAnime': StringField(app, 'NZBGET_CATEGORY_ANIME'),
-        'nzb.nzbget.categoryAnimeBacklog': StringField(app, 'NZBGET_CATEGORY_ANIME_BACKLOG'),
-        'nzb.nzbget.categoryBacklog': StringField(app, 'NZBGET_CATEGORY_BACKLOG'),
-        'nzb.nzbget.host': StringField(app, 'NZBGET_HOST'),
-        'nzb.nzbget.password': StringField(app, 'NZBGET_PASSWORD'),
-        'nzb.nzbget.priority': StringField(app, 'NZBGET_PRIORITY'),
-        'nzb.nzbget.useHttps': BooleanField(app, 'NZBGET_USE_HTTPS'),
-        'nzb.nzbget.username': StringField(app, 'NZBGET_USERNAME'),
-        'nzb.sabnzbd.apiKey': StringField(app, 'SAB_APIKEY'),
-        'nzb.sabnzbd.category': StringField(app, 'SAB_CATEGORY'),
-        'nzb.sabnzbd.categoryAnime': StringField(app, 'SAB_CATEGORY_ANIME'),
-        'nzb.sabnzbd.categoryAnimeBacklog': StringField(app, 'SAB_CATEGORY_ANIME_BACKLOG'),
-        'nzb.sabnzbd.categoryBacklog': StringField(app, 'SAB_CATEGORY_BACKLOG'),
-        'nzb.sabnzbd.forced': BooleanField(app, 'SAB_FORCED'),
-        'nzb.sabnzbd.host': StringField(app, 'SAB_HOST'),
-        'nzb.sabnzbd.password': StringField(app, 'SAB_PASSWORD'),
-        'nzb.sabnzbd.username': StringField(app, 'SAB_USERNAME'),
-        'selectedRootIndex': IntegerField(app, 'SELECTED_ROOT'),
-        'layout.schedule': EnumField(app, 'COMING_EPS_LAYOUT', ('poster', 'banner', 'list', 'calendar'),
-                                     default_value='banner', post_processor=layout_schedule_post_processor),
-        'layout.history': EnumField(app, 'HISTORY_LAYOUT', ('compact', 'detailed'), default_value='detailed'),
-        'layout.home': EnumField(app, 'HOME_LAYOUT', ('poster', 'small', 'banner', 'simple', 'coverflow'),
-                                 default_value='poster'),
-        'layout.show.allSeasons': BooleanField(app, 'DISPLAY_ALL_SEASONS'),
-        'layout.show.specials': BooleanField(app, 'DISPLAY_SHOW_SPECIALS'),
-        'layout.show.showListOrder': ListField(app, 'SHOW_LIST_ORDER'),
-        'theme.name': StringField(app, 'THEME_NAME'),
-        'backlogOverview.period': StringField(app, 'BACKLOG_PERIOD'),
-        'backlogOverview.status': StringField(app, 'BACKLOG_STATUS'),
-        'rootDirs': ListField(app, 'ROOT_DIRS'),
+        'main': {
+            'anonRedirect': StringField(app, 'ANON_REDIRECT'),
+            'emby.enabled': BooleanField(app, 'USE_EMBY'),
+            'torrents.authType': StringField(app, 'TORRENT_AUTH_TYPE'),
+            'torrents.dir': StringField(app, 'TORRENT_DIR'),
+            'torrents.enabled': BooleanField(app, 'USE_TORRENTS'),
+            'torrents.highBandwidth': StringField(app, 'TORRENT_HIGH_BANDWIDTH'),
+            'torrents.host': StringField(app, 'TORRENT_HOST'),
+            'torrents.label': StringField(app, 'TORRENT_LABEL'),
+            'torrents.labelAnime': StringField(app, 'TORRENT_LABEL_ANIME'),
+            'torrents.method': StringField(app, 'TORRENT_METHOD'),
+            'torrents.password': StringField(app, 'TORRENT_PASSWORD'),
+            'torrents.path': BooleanField(app, 'TORRENT_PATH'),
+            'torrents.paused': BooleanField(app, 'TORRENT_PAUSED'),
+            'torrents.rpcurl': StringField(app, 'TORRENT_RPCURL'),
+            'torrents.seedLocation': StringField(app, 'TORRENT_SEED_LOCATION'),
+            'torrents.seedTime': StringField(app, 'TORRENT_SEED_TIME'),
+            'torrents.username': StringField(app, 'TORRENT_USERNAME'),
+            'torrents.verifySSL': BooleanField(app, 'TORRENT_VERIFY_CERT'),
+            'nzb.enabled': BooleanField(app, 'USE_NZBS'),
+            'nzb.dir': StringField(app, 'NZB_DIR'),
+            'nzb.method': StringField(app, 'NZB_METHOD'),
+            'nzb.nzbget.category': StringField(app, 'NZBGET_CATEGORY'),
+            'nzb.nzbget.categoryAnime': StringField(app, 'NZBGET_CATEGORY_ANIME'),
+            'nzb.nzbget.categoryAnimeBacklog': StringField(app, 'NZBGET_CATEGORY_ANIME_BACKLOG'),
+            'nzb.nzbget.categoryBacklog': StringField(app, 'NZBGET_CATEGORY_BACKLOG'),
+            'nzb.nzbget.host': StringField(app, 'NZBGET_HOST'),
+            'nzb.nzbget.password': StringField(app, 'NZBGET_PASSWORD'),
+            'nzb.nzbget.priority': StringField(app, 'NZBGET_PRIORITY'),
+            'nzb.nzbget.useHttps': BooleanField(app, 'NZBGET_USE_HTTPS'),
+            'nzb.nzbget.username': StringField(app, 'NZBGET_USERNAME'),
+            'nzb.sabnzbd.apiKey': StringField(app, 'SAB_APIKEY'),
+            'nzb.sabnzbd.category': StringField(app, 'SAB_CATEGORY'),
+            'nzb.sabnzbd.categoryAnime': StringField(app, 'SAB_CATEGORY_ANIME'),
+            'nzb.sabnzbd.categoryAnimeBacklog': StringField(app, 'SAB_CATEGORY_ANIME_BACKLOG'),
+            'nzb.sabnzbd.categoryBacklog': StringField(app, 'SAB_CATEGORY_BACKLOG'),
+            'nzb.sabnzbd.forced': BooleanField(app, 'SAB_FORCED'),
+            'nzb.sabnzbd.host': StringField(app, 'SAB_HOST'),
+            'nzb.sabnzbd.password': StringField(app, 'SAB_PASSWORD'),
+            'nzb.sabnzbd.username': StringField(app, 'SAB_USERNAME'),
+            'selectedRootIndex': IntegerField(app, 'SELECTED_ROOT'),
+            'layout.schedule': EnumField(app, 'COMING_EPS_LAYOUT', ('poster', 'banner', 'list', 'calendar'),
+                                         default_value='banner', post_processor=layout_schedule_post_processor),
+            'layout.history': EnumField(app, 'HISTORY_LAYOUT', ('compact', 'detailed'), default_value='detailed'),
+            'layout.home': EnumField(app, 'HOME_LAYOUT', ('poster', 'small', 'banner', 'simple', 'coverflow'),
+                                     default_value='poster'),
+            'layout.show.allSeasons': BooleanField(app, 'DISPLAY_ALL_SEASONS'),
+            'layout.show.specials': BooleanField(app, 'DISPLAY_SHOW_SPECIALS'),
+            'layout.show.showListOrder': ListField(app, 'SHOW_LIST_ORDER'),
+            'theme.name': StringField(app, 'THEME_NAME'),
+            'backlogOverview.period': StringField(app, 'BACKLOG_PERIOD'),
+            'backlogOverview.status': StringField(app, 'BACKLOG_STATUS'),
+            'rootDirs': ListField(app, 'ROOT_DIRS'),
+        }
     }
 
     def get(self, identifier, path_param=None):
@@ -137,22 +139,45 @@ class ConfigHandler(BaseRequestHandler):
 
     def patch(self, identifier, *args, **kwargs):
         """Patch general configuration."""
-        if not identifier:
-            return self._bad_request('Config identifier not specified')
-
-        if identifier != 'main':
+        if identifier and identifier not in self.patches:
             return self._not_found('Config not found')
 
         data = json_decode(self.request.body)
+
+        if not data:
+            return self._bad_request('Request body is empty')
+
+        if identifier:
+            sections = {
+                identifier: data
+            }
+        else:
+            # If no section was provided, parse top level keys as sections
+            sections = {}
+            for section, section_data in iteritems(data):
+                if section not in self.patches:
+                    log.warning('Config patch section ignored %r', section)
+                    continue
+                sections[section] = section_data
+
+            if not sections:
+                return self._bad_request('Failed to parse any config patch sections')
+
         accepted = {}
         ignored = {}
 
-        for key, value in iter_nested_items(data):
-            patch_field = self.patches.get(key)
-            if patch_field and patch_field.patch(app, value):
-                set_nested_value(accepted, key, value)
-            else:
-                set_nested_value(ignored, key, value)
+        for section, section_data in iteritems(sections):
+            for key, value in iter_nested_items(section_data):
+                patch_field = self.patches[section].get(key)
+
+                # Prepend the section name if patching multiple sections at once
+                if not identifier:
+                    key = section + '.' + key
+
+                if patch_field and patch_field.patch(app, value):
+                    set_nested_value(accepted, key, value)
+                else:
+                    set_nested_value(ignored, key, value)
 
         if ignored:
             log.warning('Config patch ignored %r', ignored)
