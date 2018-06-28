@@ -15,7 +15,7 @@ const startVue = () => {
         data() {
             return {
                 seriesSlug: $('#series-slug').attr('value'),
-                series: {
+                show: {
                     config: {
                         aliases: [],
                         dvdOrder: null,
