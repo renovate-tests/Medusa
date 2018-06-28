@@ -276,6 +276,8 @@ const store = new Puex({
             anonRedirect: null,
             logDir: null
         },
+        // Currently loaded show
+        show: {},
         // Loaded show list
         // New shows can be added via
         // $store.dispatch('getShow', { indexer, id });
@@ -398,12 +400,14 @@ const store = new Puex({
         },
         [ADD_SHOW](state, show) {
             const { shows } = state;
-            const showExists = shows.filter(({ id, indexer }) => id[indexer] === show.id[indexer]).length === 1;
-            if (showExists) {
-                state.shows[shows.indexOf(showExists)] = show;
-            } else {
-                state.shows.push(show);
+            const existingShow = shows.find(({ id, indexer }) => id[indexer] === show.id[indexer]);
+
+            if (existingShow) {
+                state.shows[shows.indexOf(existingShow)] = show;
+                return;
             }
+
+            state.shows.push(show);
         }
     },
     // Add all blocking code here
@@ -469,6 +473,20 @@ const store = new Puex({
             }
 
             return shows.forEach(show => dispatch('getShow', show));
+        },
+        setShow(context, { indexer, id, data, save }) {
+            const { commit, dispatch } = context;
+
+            // Just update local store
+            if (!save) {
+                return api.get('/series/' + indexer + id).then(response => {
+                    const show = Object.assign({}, response.data, data);
+                    commit(ADD_SHOW, show);
+                });
+            }
+
+            // Send to API
+            return api.patch('series/' + indexer + id, data).then(setTimeout(() => dispatch('getShow', { indexer, id }), 500));
         },
         testNotifications() {
             return displayNotification('error', 'test', 'test<br><i class="test-class">hello <b>world</b></i><ul><li>item 1</li><li>item 2</li></ul>', 'notification-test');
