@@ -226,6 +226,7 @@ class DataGenerator(object):
         section_data['databaseVersion']['major'] = app.MAJOR_DB_VERSION
         section_data['databaseVersion']['minor'] = app.MINOR_DB_VERSION
         section_data['os'] = platform.platform()
+        section_data['pid'] = app.PID
         section_data['locale'] = '.'.join([text_type(loc or 'Unknown') for loc in app.LOCALE])
         section_data['localUser'] = app.OS_USER or 'Unknown'
         section_data['programDir'] = app.PROG_DIR

@@ -286,6 +286,7 @@ const store = new Puex({
             githubUrl: null,
             datePreset: null,
             subtitlesMulti: null,
+            pid: null,
             os: null,
             anonRedirect: null,
             logDir: null

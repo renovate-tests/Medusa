@@ -21,6 +21,7 @@ from tornado.httpclient import HTTPError
 def config(monkeypatch, app_config):
     python_version = 'Python Test v1.2.3.4'
     monkeypatch.setattr(sys, 'version', python_version)
+    app_config('PID', 4321)
     os_user = app_config('OS_USER', 'superuser')
     app_config('LOCALE', (None, 'ABC'))
     app_locale = 'Unknown.ABC'
@@ -50,6 +51,7 @@ def config(monkeypatch, app_config):
     config_data['databaseVersion'] = NonEmptyDict()
     config_data['databaseVersion']['major'] = app.MAJOR_DB_VERSION
     config_data['databaseVersion']['minor'] = app.MINOR_DB_VERSION
+    config_data['pid'] = app.PID
     config_data['os'] = platform.platform()
     config_data['locale'] = app_locale
     config_data['localUser'] = os_user

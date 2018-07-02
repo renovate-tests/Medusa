@@ -92,9 +92,9 @@
                         <li v-if="config.logs.numWarnings > 0"><app-link :href="'errorlogs/?level=' + warningLevel"><i class="menu-icon-viewlog-errors"></i>&nbsp;View Warnings <span class="badge btn-warning">{{config.logs.numWarnings}}</span></app-link></li>
                         <li><app-link href="errorlogs/viewlog/"><i class="menu-icon-viewlog"></i>&nbsp;View Log</app-link></li>
                         <li role="separator" class="divider"></li>
-                        <li><app-link :href="'home/updateCheck?pid=' + medusaPID"><i class="menu-icon-update"></i>&nbsp;Check For Updates</app-link></li>
-                        <li><app-link :href="'home/restart/?pid=' + medusaPID" class="confirm restart"><i class="menu-icon-restart"></i>&nbsp;Restart</app-link></li>
-                        <li><app-link :href="'home/shutdown/?pid=' + medusaPID" class="confirm shutdown"><i class="menu-icon-shutdown"></i>&nbsp;Shutdown</app-link></li>
+                        <li><app-link :href="'home/updateCheck?pid=' + config.pid"><i class="menu-icon-update"></i>&nbsp;Check For Updates</app-link></li>
+                        <li><app-link :href="'home/restart/?pid=' + config.pid" class="confirm restart"><i class="menu-icon-restart"></i>&nbsp;Restart</app-link></li>
+                        <li><app-link :href="'home/shutdown/?pid=' + config.pid" class="confirm shutdown"><i class="menu-icon-shutdown"></i>&nbsp;Shutdown</app-link></li>
                         <li v-if="loggedIn !== true"><app-link href="logout" class="confirm logout"><i class="menu-icon-shutdown"></i>&nbsp;Logout</app-link></li>
                         <li role="separator" class="divider"></li>
                         <li><app-link href="home/status/"><i class="menu-icon-info"></i>&nbsp;Server Status</app-link></li>
@@ -117,7 +117,6 @@ Vue.component('app-header', {
     data() {
         return {
             // Python conversions
-            medusaPID: ${json.dumps(sbPID)},
             loggedIn: ${json.dumps(loggedIn)},
             recentShows: ${json.dumps(app.SHOWS_RECENT)},
 
