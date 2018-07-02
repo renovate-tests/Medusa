@@ -13,6 +13,7 @@ from medusa import (
     common,
     config,
     db,
+    logger,
     ws,
 )
 from medusa.helper.mappings import NonEmptyDict
@@ -28,7 +29,7 @@ from medusa.server.api.v2.base import (
     set_nested_value,
 )
 
-from six import text_type
+from six import iteritems, text_type
 
 from tornado.escape import json_decode
 
@@ -249,8 +250,10 @@ class DataGenerator(object):
         section_data['news']['latest'] = app.NEWS_LATEST
         section_data['news']['unread'] = app.NEWS_UNREAD
 
-        section_data['numErrors'] = len(classes.ErrorViewer.errors)
-        section_data['numWarnings'] = len(classes.WarningViewer.errors)
+        section_data['logs'] = NonEmptyDict()
+        section_data['logs']['loggingLevels'] = {k.lower(): v for k, v in iteritems(logger.LOGGING_LEVELS)}
+        section_data['logs']['numErrors'] = len(classes.ErrorViewer.errors)
+        section_data['logs']['numWarnings'] = len(classes.WarningViewer.errors)
 
         section_data['failedDownloads'] = NonEmptyDict()
         section_data['failedDownloads']['enabled'] = bool(app.USE_FAILED_DOWNLOADS)

@@ -88,8 +88,8 @@
                         <li><app-link href="changes/"><i class="menu-icon-changelog"></i>&nbsp;Changelog</app-link></li>
                         <li><app-link :href="config.donationsUrl"><i class="menu-icon-support"></i>&nbsp;Support Medusa</app-link></li>
                         <li role="separator" class="divider"></li>
-                        <li v-if="config.numErrors > 0"><app-link href="errorlogs/"><i class="menu-icon-error"></i>&nbsp;View Errors <span class="badge btn-danger">{{config.numErrors}}</span></app-link></li>
-                        <li v-if="config.numWarnings > 0"><app-link :href="'errorlogs/?level=' + loggerWarning"><i class="menu-icon-viewlog-errors"></i>&nbsp;View Warnings <span class="badge btn-warning">{{config.numWarnings}}</span></app-link></li>
+                        <li v-if="config.logs.numErrors > 0"><app-link href="errorlogs/"><i class="menu-icon-error"></i>&nbsp;View Errors <span class="badge btn-danger">{{config.logs.numErrors}}</span></app-link></li>
+                        <li v-if="config.logs.numWarnings > 0"><app-link :href="'errorlogs/?level=' + warningLevel"><i class="menu-icon-viewlog-errors"></i>&nbsp;View Warnings <span class="badge btn-warning">{{config.logs.numWarnings}}</span></app-link></li>
                         <li><app-link href="errorlogs/viewlog/"><i class="menu-icon-viewlog"></i>&nbsp;View Log</app-link></li>
                         <li role="separator" class="divider"></li>
                         <li><app-link :href="'home/updateCheck?pid=' + medusaPID"><i class="menu-icon-update"></i>&nbsp;Check For Updates</app-link></li>
@@ -109,7 +109,7 @@
 </script>
 <%!
     import json
-    from medusa import app, logger
+    from medusa import app
 %>
 <script>
 Vue.component('app-header', {
@@ -120,7 +120,6 @@ Vue.component('app-header', {
             medusaPID: ${json.dumps(sbPID)},
             loggedIn: ${json.dumps(loggedIn)},
             recentShows: ${json.dumps(app.SHOWS_RECENT)},
-            loggerWarning: ${logger.WARNING}, // numeric
 
             <% has_emby_api_key = json.dumps(app.EMBY_APIKEY != '') %>
             hasEmbyApiKey: ${has_emby_api_key},
@@ -154,15 +153,21 @@ Vue.component('app-header', {
         },
         toolsBadgeCount() {
             const { config } = this;
-            const { news, numErrors, numWarnings } = config;
-            return numErrors + numWarnings + news.unread;
+            const { news, logs } = config;
+            return logs.numErrors + logs.numWarnings + news.unread;
         },
         toolsBadgeClass() {
             const { config } = this;
-            const { numErrors, numWarnings } = config;
-            if (numErrors > 0) return ' btn-danger';
-            if (numWarnings > 0) return ' btn-warning';
+            const { logs } = config;
+            if (logs.numErrors > 0) return ' btn-danger';
+            if (logs.numWarnings > 0) return ' btn-warning';
             return '';
+        },
+        warningLevel() {
+            const { config } = this;
+            const { logs } = config;
+            const { loggingLevels } = logs;
+            return loggingLevels.warning;
         },
         linkVisible() {
             const { config } = this;

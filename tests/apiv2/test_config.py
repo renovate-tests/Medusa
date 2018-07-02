@@ -6,11 +6,13 @@ import json
 import platform
 import sys
 
-from medusa import app, classes, db
+from medusa import app, classes, db, logger
 from medusa.helper.mappings import NonEmptyDict
 from medusa.indexers.indexer_config import get_indexer_config
 
 import pytest
+
+from six import iteritems
 
 from tornado.httpclient import HTTPError
 
@@ -73,8 +75,10 @@ def config(monkeypatch, app_config):
     config_data['news']['latest'] = app.NEWS_LATEST
     config_data['news']['unread'] = app.NEWS_UNREAD
 
-    config_data['numErrors'] = len(classes.ErrorViewer.errors)
-    config_data['numWarnings'] = len(classes.WarningViewer.errors)
+    config_data['logs'] = NonEmptyDict()
+    config_data['logs']['loggingLevels'] = {k.lower(): v for k, v in iteritems(logger.LOGGING_LEVELS)}
+    config_data['logs']['numErrors'] = len(classes.ErrorViewer.errors)
+    config_data['logs']['numWarnings'] = len(classes.WarningViewer.errors)
 
     config_data['failedDownloads'] = NonEmptyDict()
     config_data['failedDownloads']['enabled'] = bool(app.USE_FAILED_DOWNLOADS)

@@ -267,8 +267,11 @@ const store = new Puex({
                 latest: null,
                 unread: null
             },
-            numErrors: null,
-            numWarnings: null,
+            logs: {
+                loggingLevels: {},
+                numErrors: null,
+                numWarnings: null
+            },
             failedDownloads: {
                 enabled: null,
                 deleteFailed: null
