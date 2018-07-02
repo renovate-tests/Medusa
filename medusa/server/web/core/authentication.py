@@ -62,7 +62,7 @@ class LoginHandler(BaseHandler):
             self.redirect('/{page}/'.format(page=app.DEFAULT_PAGE))
         else:
             t = PageTemplate(rh=self, filename='login.mako')
-            self.finish(t.render(title='Login', header='Login', topmenu='login'))
+            self.finish(t.render(title='Login', header='Login'))
 
     def post(self, *args, **kwargs):
         """
