@@ -6,7 +6,7 @@ import json
 import platform
 import sys
 
-from medusa import app, db
+from medusa import app, classes, db
 from medusa.helper.mappings import NonEmptyDict
 from medusa.indexers.indexer_config import get_indexer_config
 
@@ -60,6 +60,7 @@ def config(monkeypatch, app_config):
     config_data['webRoot'] = app.WEB_ROOT
     config_data['githubUrl'] = app.GITHUB_IO_URL
     config_data['wikiUrl'] = app.WIKI_URL
+    config_data['donationsUrl'] = app.DONATIONS_URL
     config_data['sourceUrl'] = app.APPLICATION_URL
     config_data['downloadUrl'] = app.DOWNLOAD_URL
     config_data['subtitlesMulti'] = bool(app.SUBTITLES_MULTI)
@@ -71,6 +72,13 @@ def config(monkeypatch, app_config):
     config_data['news']['lastRead'] = app.NEWS_LAST_READ
     config_data['news']['latest'] = app.NEWS_LATEST
     config_data['news']['unread'] = app.NEWS_UNREAD
+
+    config_data['numErrors'] = len(classes.ErrorViewer.errors)
+    config_data['numWarnings'] = len(classes.WarningViewer.errors)
+
+    config_data['failedDownloads'] = NonEmptyDict()
+    config_data['failedDownloads']['enabled'] = bool(app.USE_FAILED_DOWNLOADS)
+    config_data['failedDownloads']['deleteFailed'] = bool(app.DELETE_FAILED)
 
     config_data['kodi'] = NonEmptyDict()
     config_data['kodi']['enabled'] = bool(app.USE_KODI)
@@ -171,6 +179,10 @@ def config(monkeypatch, app_config):
 
     config_data['indexers'] = NonEmptyDict()
     config_data['indexers']['config'] = get_indexer_config()
+
+    config_data['postProcess'] = NonEmptyDict()
+    # config_data['postProcess']['method'] = app.PROCESS_METHOD  # Omitted because it defaults to None
+    config_data['postProcess']['postponeIfNoSubs'] = bool(app.POSTPONE_IF_NO_SUBS)
 
     return config_data
 

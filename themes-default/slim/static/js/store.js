@@ -76,6 +76,7 @@ const store = new Puex({
         // Main config
         config: {
             wikiUrl: null,
+            donationsUrl: null,
             localUser: null,
             posterSortdir: null,
             locale: null,
@@ -265,6 +266,16 @@ const store = new Puex({
                 lastRead: null,
                 latest: null,
                 unread: null
+            },
+            numErrors: null,
+            numWarnings: null,
+            failedDownloads: {
+                enabled: null,
+                deleteFailed: null
+            },
+            postProcess: {
+                method: null,
+                postponeIfNoSubs: null
             },
             sslVersion: null,
             pythonVersion: null,

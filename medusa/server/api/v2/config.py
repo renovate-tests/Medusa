@@ -9,6 +9,7 @@ import sys
 
 from medusa import (
     app,
+    classes,
     common,
     config,
     db,
@@ -235,6 +236,7 @@ class DataGenerator(object):
         section_data['webRoot'] = app.WEB_ROOT
         section_data['githubUrl'] = app.GITHUB_IO_URL
         section_data['wikiUrl'] = app.WIKI_URL
+        section_data['donationsUrl'] = app.DONATIONS_URL
         section_data['sourceUrl'] = app.APPLICATION_URL
         section_data['downloadUrl'] = app.DOWNLOAD_URL
         section_data['subtitlesMulti'] = bool(app.SUBTITLES_MULTI)
@@ -246,6 +248,13 @@ class DataGenerator(object):
         section_data['news']['lastRead'] = app.NEWS_LAST_READ
         section_data['news']['latest'] = app.NEWS_LATEST
         section_data['news']['unread'] = app.NEWS_UNREAD
+
+        section_data['numErrors'] = len(classes.ErrorViewer.errors)
+        section_data['numWarnings'] = len(classes.WarningViewer.errors)
+
+        section_data['failedDownloads'] = NonEmptyDict()
+        section_data['failedDownloads']['enabled'] = bool(app.USE_FAILED_DOWNLOADS)
+        section_data['failedDownloads']['deleteFailed'] = bool(app.DELETE_FAILED)
 
         section_data['kodi'] = NonEmptyDict()
         section_data['kodi']['enabled'] = bool(app.USE_KODI)
@@ -338,7 +347,10 @@ class DataGenerator(object):
 
         section_data['indexers'] = NonEmptyDict()
         section_data['indexers']['config'] = get_indexer_config()
-        section_data['processMethod'] = app.PROCESS_METHOD
+
+        section_data['postProcess'] = NonEmptyDict()
+        section_data['postProcess']['method'] = app.PROCESS_METHOD
+        section_data['postProcess']['postponeIfNoSubs'] = bool(app.POSTPONE_IF_NO_SUBS)
 
         return section_data
 

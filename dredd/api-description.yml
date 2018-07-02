@@ -1203,6 +1203,8 @@ definitions:
         properties:
           wikiUrl:
             type: string
+          donationsUrl:
+            type: string
           themeName:
             type: string
           namingForceFolders:

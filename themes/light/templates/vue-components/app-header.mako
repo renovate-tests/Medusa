@@ -54,9 +54,9 @@
                         <li v-if="linkVisible.emby"><app-link href="home/updateEMBY/"><i class="menu-icon-emby"></i>&nbsp;Update Emby</app-link></li>
                         ## Avoid mixed content blocking by open manage torrent in new tab
                         <li v-if="linkVisible.manageTorrents"><app-link href="manage/manageTorrents/" target="_blank"><i class="menu-icon-bittorrent"></i>&nbsp;Manage Torrents</app-link></li>
-                        <li v-if="failedDownloadsEnabled"><app-link href="manage/failedDownloads/"><i class="menu-icon-failed-download"></i>&nbsp;Failed Downloads</app-link></li>
-                        <li v-if="config.subtitles.enabled"><app-link href="manage/subtitleMissed/"><i class="menu-icon-backlog"></i>&nbsp;Missed Subtitle Management</app-link></li>
-                        <li v-if="postponeIfNoSubs"><app-link href="manage/subtitleMissedPP/"><i class="menu-icon-backlog"></i>&nbsp;Missed Subtitle in Post-Process folder</app-link></li>
+                        <li v-if="linkVisible.failedDownloads"><app-link href="manage/failedDownloads/"><i class="menu-icon-failed-download"></i>&nbsp;Failed Downloads</app-link></li>
+                        <li v-if="linkVisible.subtitleMissed"><app-link href="manage/subtitleMissed/"><i class="menu-icon-backlog"></i>&nbsp;Missed Subtitle Management</app-link></li>
+                        <li v-if="linkVisible.subtitleMissedPP"><app-link href="manage/subtitleMissedPP/"><i class="menu-icon-backlog"></i>&nbsp;Missed Subtitle in Post-Process folder</app-link></li>
                     </ul>
                     <div style="clear:both;"></div>
                 </li>
@@ -86,10 +86,10 @@
                         <li><app-link href="news/"><i class="menu-icon-news"></i>&nbsp;News <span v-if="config.news.unread > 0" class="badge">{{ config.news.unread }}</span></app-link></li>
                         <li><app-link href="IRC/"><i class="menu-icon-irc"></i>&nbsp;IRC</app-link></li>
                         <li><app-link href="changes/"><i class="menu-icon-changelog"></i>&nbsp;Changelog</app-link></li>
-                        <li><app-link :href="donationsUrl"><i class="menu-icon-support"></i>&nbsp;Support Medusa</app-link></li>
+                        <li><app-link :href="config.donationsUrl"><i class="menu-icon-support"></i>&nbsp;Support Medusa</app-link></li>
                         <li role="separator" class="divider"></li>
-                        <li v-if="numErrors > 0"><app-link href="errorlogs/"><i class="menu-icon-error"></i>&nbsp;View Errors <span class="badge btn-danger">{{numErrors}}</span></app-link></li>
-                        <li v-if="numWarnings > 0"><app-link :href="'errorlogs/?level=' + loggerWarning"><i class="menu-icon-viewlog-errors"></i>&nbsp;View Warnings <span class="badge btn-warning">{{numWarnings}}</span></app-link></li>
+                        <li v-if="config.numErrors > 0"><app-link href="errorlogs/"><i class="menu-icon-error"></i>&nbsp;View Errors <span class="badge btn-danger">{{config.numErrors}}</span></app-link></li>
+                        <li v-if="config.numWarnings > 0"><app-link :href="'errorlogs/?level=' + loggerWarning"><i class="menu-icon-viewlog-errors"></i>&nbsp;View Warnings <span class="badge btn-warning">{{config.numWarnings}}</span></app-link></li>
                         <li><app-link href="errorlogs/viewlog/"><i class="menu-icon-viewlog"></i>&nbsp;View Log</app-link></li>
                         <li role="separator" class="divider"></li>
                         <li><app-link :href="'home/updateCheck?pid=' + medusaPID"><i class="menu-icon-update"></i>&nbsp;Check For Updates</app-link></li>
@@ -120,16 +120,10 @@ Vue.component('app-header', {
             medusaPID: ${json.dumps(sbPID)},
             loggedIn: ${json.dumps(loggedIn)},
             recentShows: ${json.dumps(app.SHOWS_RECENT)},
-            numErrors: ${numErrors}, // numeric
-            numWarnings: ${numWarnings}, // numeric
-            donationsUrl: ${json.dumps(app.DONATIONS_URL)},
             loggerWarning: ${logger.WARNING}, // numeric
 
             <% has_emby_api_key = json.dumps(app.EMBY_APIKEY != '') %>
             hasEmbyApiKey: ${has_emby_api_key},
-
-            failedDownloadsEnabled: ${json.dumps(bool(app.USE_FAILED_DOWNLOADS))},
-            postponeIfNoSubs: ${json.dumps(bool(app.POSTPONE_IF_NO_SUBS))},
 
             // JS Only
             topmenuMapping: [
@@ -159,25 +153,29 @@ Vue.component('app-header', {
             return null;
         },
         toolsBadgeCount() {
-            const { config, numErrors, numWarnings } = this;
-            const { news } = config;
+            const { config } = this;
+            const { news, numErrors, numWarnings } = config;
             return numErrors + numWarnings + news.unread;
         },
         toolsBadgeClass() {
-            const { numErrors, numWarnings } = this;
+            const { config } = this;
+            const { numErrors, numWarnings } = config;
             if (numErrors > 0) return ' btn-danger';
             if (numWarnings > 0) return ' btn-warning';
             return '';
         },
         linkVisible() {
             const { config } = this;
-            const { plex, kodi, emby, torrents } = config;
+            const { plex, kodi, emby, torrents, failedDownloads, subtitles, postProcess } = config;
 
             return {
                 plex: plex.server.enabled && plex.server.host.length !== 0,
                 kodi: kodi.enabled && kodi.host.length !== 0,
                 emby: emby.enabled && emby.host && hasEmbyApiKey,
-                manageTorrents: torrents.enabled && torrents.method !== 'blackhole'
+                manageTorrents: torrents.enabled && torrents.method !== 'blackhole',
+                failedDownloads: failedDownloads.enabled,
+                subtitleMissed: subtitles.enabled,
+                subtitleMissedPP: postProcess.postponeIfNoSubs
             };
         }
     }
