@@ -1,8 +1,5 @@
-<%inherit file="/layouts/main.mako"/>
-<%block name="scripts">
-<script type="text/x-template" id="add-shows-template">
+<template>
     <div>
-        <h1 class="header">{{header}}</h1>
         <div id="addShowPortal">
             <app-link href="addShows/newShow/" id="btnNewShow" class="btn-medusa btn-large">
                 <div class="button"><div class="add-list-icon-addnewshow"></div></div>
@@ -21,28 +18,10 @@
             </app-link>
         </div>
     </div>
-</script>
+</template>
 <script>
-const component = {
+module.exports = {
     name: 'addShows',
-    template: '#add-shows-template',
-    metaInfo: {
-        title: 'Add Shows'
-    },
-    data() {
-        return {
-            header: 'Add Shows'
-        };
-    }
+    template: '#add-shows-template'
 };
-
-window.routes.push({
-    path: '/addShows',
-    name: 'addShows',
-    component
-});
 </script>
-</%block>
-<%block name="content">
-<router-view/>
-</%block>

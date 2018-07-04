@@ -60,8 +60,13 @@ class HomeAddShows(Home):
         super(HomeAddShows, self).__init__(*args, **kwargs)
 
     def index(self):
-        t = PageTemplate(rh=self, filename='addShows.mako')
-        return t.render(topmenu='home', controller='addShows', action='index')
+        """
+        Render the addShows page.
+
+        [Converted to VueRouter]
+        """
+        t = PageTemplate(rh=self, filename='index.mako')
+        return t.render(topmenu='home')
 
     def newShow(self, show_to_add=None, other_shows=None, search_string=None):
         """

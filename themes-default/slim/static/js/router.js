@@ -3,6 +3,7 @@ const { routes, httpVueLoader } = window;
 
 if (!window.router) {
     const configComponent = httpVueLoader('js/templates/config.vue');
+    const addShowsComponent = httpVueLoader('js/templates/add-shows.vue');
     const notFoundComponent = httpVueLoader('js/templates/http/404.vue');
 
     const router = new VueRouter({
@@ -16,6 +17,14 @@ if (!window.router) {
                 header: 'Medusa Configuration'
             },
             component: configComponent
+        }, {
+            path: '/addShows',
+            name: 'addShows',
+            meta: {
+                title: 'Add Shows',
+                header: 'Add Shows'
+            },
+            component: addShowsComponent
         }, {
             path: '/not-found',
             name: 'not-found',
