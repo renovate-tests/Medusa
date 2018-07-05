@@ -8,6 +8,7 @@
 **Improvements**
 
 - Moved Help & Info page to `http-vue-loader` ([#4374](https://github.com/pymedusa/Medusa/pull/4374))
+- Converted the header to Vue ([#4519](https://github.com/pymedusa/Medusa/pull/4519))
 - _Simple message describing the improvement, and a link to the pull request._
 
 **Fixes**
